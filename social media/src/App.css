@@ -1,0 +1,9 @@
+.sidenav{
+  display: flex;
+}
+.content{
+  width: 100%;
+}
+.sidebar{
+  min-width: 1500px;
+}
