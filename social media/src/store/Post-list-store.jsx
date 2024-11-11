@@ -2,19 +2,50 @@ import { createContext,useReducer } from "react";
 export const PostList = createContext({
     postList:[],
     addPost:()=>{},
-    deletePost:()=>{}
+    deletPost:()=>{}
 });
 const postListReucer=(currpostlist,action)=>{
-    return currpostlist;
+    let newPostList=currpostlist;
+    if(action.type==="DELETE_POST")
+    {
+        newPostList=currpostlist.filter(
+            (post)=>post.userId !==action.payload.postId
+        );
+    }
+    else if(action.type==="ADD_POST"){
+        newPostList=[action.payload, ...currpostlist]
+    }
+    return newPostList;
 };
 
 const PostListProvider=({children})=>{
     const [postList,dispatchList]=useReducer(
-        PostListProvider,
+        postListReucer,
         Default_Post_List
     );
-    const addPost=()=>{};
-    const deletPost=()=>{};
+
+
+    const addPost=(userId,title,post,reactions,tags)=>{ dispatchList({
+        type:"ADD_POST",
+        payload:{
+            id:Date.now(),
+            userId:userId,
+            title:title,
+            post:post,
+            tags:tags,
+            reactions:reactions
+        },
+    })};
+
+
+    const deletPost=(postId)=>{
+        dispatchList({
+            type:"DELETE_POST",
+            payload:{
+                postId,
+            },
+        });
+    };
     return(
        <PostList.Provider value={{postList,addPost,deletPost}} >
         {children}
@@ -24,19 +55,25 @@ const PostListProvider=({children})=>{
 
 const Default_Post_List=[
     {
-        id:"1",
+        userId:"1",
         title:"going to dheli",
-        body:"ashish"
+        post:"ashish",
+        tags:["like", "dislike","comment"],
+        reactions:"20"
     },
     {
-        id:"2",
+        userId:"2",
         title:"going to eli",
-        body:"ashi"
+        post:"ashi",
+        tags:["like", "dislike","comment"],
+        reactions:"20"
     },
     {
-        id:"3",
+        userId:"3",
         title:"going to dli",
-        body:"ash"
+        post:"ash",
+        tags:["like", "dislike","comment"],
+        reactions:"20"
     },
 ]
 export default PostListProvider;
